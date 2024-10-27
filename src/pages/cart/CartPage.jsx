@@ -8,17 +8,17 @@ import { toast } from 'react-toastify'
 import { useMyContext } from '../../context/MyContext'
 import BuyNowModal from '../../components/buyNowModal/BuyNowModal'
 import { addDoc, collection, Timestamp } from 'firebase/firestore'
-import { fireDB } from '../../firebase/firebaseCongif'
+import { fireDB, analytics, logEvent } from '../../firebase/firebaseCongif'
 import { Navigate } from 'react-router-dom'
 
 const CartPage = () => {
-    const {user} = useMyContext();
+    const { user } = useMyContext();
     const [addressInfo, setAddressInfo] = useState({
         name: '',
         address: '',
         pincode: '',
         mobileNumber: '',
-        time: Timestamp.now(),
+        time:  Timestamp.now().toDate().toISOString(),
         date: new Date().toLocaleString(
             'en-US',
             {
@@ -29,12 +29,12 @@ const CartPage = () => {
         )
     });
 
-    const buyNowFunction=()=>{
-        if(addressInfo.name === '' || addressInfo.address === '' , addressInfo.mobileNumber === "" , addressInfo.pincode === ''  ){
+    const buyNowFunction = () => {
+        if (addressInfo.name === '' || addressInfo.address === '', addressInfo.mobileNumber === "", addressInfo.pincode === '') {
             toast.error('Please fill all the details')
         }
 
-        const orderInfo ={
+        const orderInfo = {
             cartItems,
             addressInfo,
             email: user.email,
@@ -53,8 +53,14 @@ const CartPage = () => {
         }
 
         try {
-            const orderRef = collection(fireDB , 'order');
-            addDoc(orderRef , orderInfo);
+            const orderRef = collection(fireDB, 'order');
+            addDoc(orderRef, orderInfo);
+            logEvent(analytics, 'order_placed', {
+                order_id: `${user.uid}-${Timestamp.now().seconds}`,
+                total_amount: cartTotal,
+                item_count: cartItems.length,
+                address: addressInfo,
+            });
             setAddressInfo({
                 name: '',
                 address: '',
@@ -68,21 +74,19 @@ const CartPage = () => {
 
     }
 
-
-
-
     const cartItems = useSelector((state) => state.cart);
     const dispatch = useDispatch();
 
-    //add to cart function
-    const addCart = (item) => {
-        dispatch(addToCart(item));
-        toast.success('Added to Cart')
-    }
 
     //delete from cart function
     const deleteCart = (item) => {
         dispatch(deleteFromCart(item));
+        logEvent(analytics, 'remove_from_cart', {
+            item_name: item.title,
+            item_id: item.id,
+            price: item.price,
+            quantity: item.quantity,
+        });
         toast.success('Delete cart')
     }
 
@@ -95,8 +99,8 @@ const CartPage = () => {
     }
 
     //cart item total
-    const cartItemTotal = cartItems.map(item=>item.quantity).reduce((preValue , currValue)=>preValue + currValue , 0);
-    const cartTotal = cartItems.map((item=> item.price * item.quantity)).reduce((preValue , currValue)=> preValue +currValue , 0)
+    const cartItemTotal = cartItems.map(item => item.quantity).reduce((preValue, currValue) => preValue + currValue, 0);
+    const cartTotal = cartItems.map((item => item.price * item.quantity)).reduce((preValue, currValue) => preValue + currValue, 0)
 
 
     useEffect(() => {
@@ -105,8 +109,8 @@ const CartPage = () => {
 
     return (
         <Layout>
-            <div className="container mx-auto px-4 max-w-7xl lg:px-0 pt-12">
-                <div className="mx-auto max-w-2xl py-8 lg:max-w-7xl">
+            {/* <div className="container mx-auto px-4 max-w-7xl lg:px-0 pt-12"> */}
+            <div className="mx-auto max-w-2xl py-8 lg:max-w-7xl pt-20">
                     <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
                         Shopping Cart
                     </h1>
@@ -116,74 +120,71 @@ const CartPage = () => {
                                 Items in your shopping cart
                             </h2>
                             <ul role="list" className="divide-y divide-gray-200">
-                                { cartItems.length >0 ?
-                                cartItems.map((item, index) => (
-                                    <div key={index} className="">
-                                        <li className="flex py-6 sm:py-6 ">
-                                            <div className="flex-shrink-0">
-                                                <img
-                                                    src={item.productImageUrl}
-                                                    alt="img"
-                                                    className="sm:h-38 sm:w-38 h-24 w-24 rounded-md object-contain object-center"
-                                                />
-                                            </div>
+                                {cartItems.length > 0 ?
+                                    cartItems.map((item, index) => (
+                                        <div key={index} className="">
+                                            <li className="flex py-6 sm:py-6 ">
+                                                <div className="flex-shrink-0">
+                                                    <img
+                                                        src={item.productImageUrl}
+                                                        alt="img"
+                                                        className="sm:h-38 sm:w-38 h-24 w-24 rounded-md object-contain object-center"
+                                                    />
+                                                </div>
 
-                                            <div className="ml-4 flex flex-1 flex-col justify-between sm:ml-6">
-                                                <div className="relative pr-9 sm:grid sm:grid-cols-2 sm:gap-x-6 sm:pr-0">
-                                                    <div>
-                                                        <div className="flex justify-between">
-                                                            <h3 className="text-sm">
-                                                                <div className="font-semibold text-black">
-                                                                    {item.title}
-                                                                </div>
-                                                            </h3>
-                                                        </div>
-                                                        <div className="mt-1 flex text-sm">
-                                                            <p className="text-sm text-gray-500">{item.category}</p>
-                                                        </div>
-                                                        <div className="mt-1 flex items-end">
-                                                            <p className="text-sm font-medium text-gray-600">
-                                                                {item.price}
-                                                            </p>
+                                                <div className="ml-4 flex flex-1 flex-col justify-between sm:ml-6">
+                                                    <div className="relative pr-9 sm:grid sm:grid-cols-2 sm:gap-x-6 sm:pr-0">
+                                                        <div>
+                                                            <div className="flex justify-between">
+                                                                <h3 className="text-sm">
+                                                                    <div className="font-semibold text-black">
+                                                                        {item.title}
+                                                                    </div>
+                                                                </h3>
+                                                            </div>
+                                                            <div className="mt-1 flex text-sm">
+                                                                <p className="text-sm text-gray-500">{item.category}</p>
+                                                            </div>
+                                                            <div className="mt-1 flex items-end">
+                                                                <p className="text-sm font-medium text-gray-600">
+                                                                    {item.price}
+                                                                </p>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </li>
-                                        <div className="mb-2 flex">
-                                            <div className="min-w-24 flex">
-                                                <button onClick={()=>handleDecrement(item.id)} type="button" className="h-7 w-7" >
-                                                    -
-                                                </button>
-                                                <input
-                                                    type="text"
-                                                    className="mx-1 h-7 w-9 rounded-md border text-center"
-                                                    value={item.quantity}
-                                                    onChange={()=>{}}
-                                                />
-                                                <button onClick={()=>handleIncrement(item.id)} type="button" className="flex h-7 w-7 items-center justify-center">
-                                                    +
-                                                </button>
-                                            </div>
-                                            <div className="ml-6 flex text-sm">
-                                                <button onClick={()=> deleteCart(item)} type="button" className="flex items-center space-x-1 px-2 py-1 pl-0">
-                                                    <BiTrash size={12} className="text-red-500" />
-                                                    <span className="text-xs font-medium text-red-500">Remove</span>
-                                                </button>
+                                            </li>
+                                            <div className="mb-2 flex">
+                                                <div className="min-w-24 flex">
+                                                    <button onClick={() => handleDecrement(item.id)} type="button" className="h-7 w-7" >
+                                                        -
+                                                    </button>
+                                                    <input
+                                                        type="text"
+                                                        className="mx-1 h-7 w-9 rounded-md border text-center"
+                                                        value={item.quantity}
+                                                        onChange={() => { }}
+                                                    />
+                                                    <button onClick={() => handleIncrement(item.id)} type="button" className="flex h-7 w-7 items-center justify-center">
+                                                        +
+                                                    </button>
+                                                </div>
+                                                <div className="ml-6 flex text-sm">
+                                                    <button onClick={() => deleteCart(item)} type="button" className="flex items-center space-x-1 px-2 py-1 pl-0">
+                                                        <BiTrash size={12} className="text-red-500" />
+                                                        <span className="text-xs font-medium text-red-500">Remove</span>
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                ))
-                               :
-                                <h1>No Item</h1>
-                               }
-
-
-
-
+                                    ))
+                                    :
+                                    <h1>No Item</h1>
+                                }
                             </ul>
                         </section>
-                        {/* Order summary */}
+
+
                         <section
                             aria-labelledby="summary-heading"
                             className="mt-16 mr-12 rounded-md bg-white lg:col-span-4 lg:mt-0 lg:p-0"
@@ -218,7 +219,7 @@ const CartPage = () => {
                                                 addressInfo={addressInfo}
                                                 setAddressInfo={setAddressInfo}
                                                 buyNowFunction={buyNowFunction}
-                                            /> : <Navigate to={'/login'}/>
+                                            /> : <Navigate to={'/login'} />
                                         }
                                     </div>
                                 </div>
@@ -226,7 +227,10 @@ const CartPage = () => {
                         </section>
                     </form>
                 </div>
-            </div>
+
+    
+
+
         </Layout>
     )
 }

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useMyContext } from '../../context/MyContext';
 import { toast } from 'react-toastify';
 import Loader from '../../components/loader/Loader';
-import { fireDB } from '../../firebase/firebaseCongif';
+import { analytics, fireDB, logEvent } from '../../firebase/firebaseCongif';
 import Layout from '../../components/layout/Layout';
 
 
@@ -65,6 +65,11 @@ const AddProductPage = () => {
       const productRef = collection(fireDB, 'products');
       await addDoc(productRef, product)
       toast.success("Add product successfully");
+      logEvent(analytics, 'add_to_cart', {
+        title: product.title,
+        price: product.price,
+        category: product.category
+      });
       navigate('/admin-dashboard')
       setLoading(false)
     } catch (error) {

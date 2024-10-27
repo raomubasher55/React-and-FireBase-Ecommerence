@@ -4,7 +4,7 @@ import img from '../../assets/bag_1.png'
 import { useParams } from 'react-router-dom';
 import { useMyContext } from '../../context/MyContext';
 import { doc, getDoc, setDoc, Timestamp } from 'firebase/firestore';
-import { fireDB } from '../../firebase/firebaseCongif';
+import { analytics, fireDB, logEvent } from '../../firebase/firebaseCongif';
 import Loader from '../../components/loader/Loader';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart, deleteFromCart } from '../../redux/cartSlice';
@@ -36,12 +36,24 @@ const ProductInfo = () => {
   //add to cart function
   const addCart = (item) => {
     dispatch(addToCart(item));
+    logEvent(analytics, 'add_to_cart', {
+      item_name: item.title,
+      item_id: item.id,
+      price: item.price,
+      quantity: item.quantity,
+  });
     toast.success('Added to Cart')
   }
 
   //delete from cart function
   const deleteCart = (item) => {
     dispatch(deleteFromCart(item));
+    logEvent(analytics, 'remove_from_cart', {
+      item_name: item.title,
+      item_id: item.id,
+      price: item.price,
+      quantity: item.quantity,
+  });
     toast.success('Delete cart')
   }
 

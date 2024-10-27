@@ -5,7 +5,7 @@ import { useMyContext } from '../../context/MyContext';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth, fireDB } from '../../firebase/firebaseCongif';
+import { analytics, auth, fireDB, logEvent } from '../../firebase/firebaseCongif';
 import { addDoc, collection, Timestamp } from 'firebase/firestore';
 import Loader from '../loader/Loader';
 
@@ -21,17 +21,27 @@ const Signup = () => {
 
     const userSignupFuntion = async(e)=> {
         e.preventDefault();
-        if(credential.name === '' || credential.email === '' || credential.password === ""){
-             toast.error("All field are required")
+        if (credential.name === '' || credential.email === '' || credential.password === "") {
+            toast.error("All fields are required");
+            logEvent(analytics, 'signup_attempt', {
+                success: false,
+                error: 'All fields are required'
+            });
+            setLoading(false);
+            return;
         }
         setLoading(true);
 
         try {
+            logEvent(analytics, 'signup_attempt', {
+                success: false,
+                email: credential.email
+            });
             const users = await createUserWithEmailAndPassword(auth , credential.email , credential.password);
 
             const user = {
                 name: credential.name,
-                email: credential.password,
+                email: credential.email,
                 uid: users.user.uid,
                 role: credential.role,
                 time: Timestamp.now(),
@@ -53,13 +63,21 @@ const Signup = () => {
 
             toast.success("User Login Successfully");
 
+            logEvent(analytics, 'signup_success', {
+                email: credential.email
+            });
+
             setLoading(false);
 
             navigate('/login')
 
         } catch (error) {
-            setLoading(true);
-            console.log(error);
+            setLoading(false);
+            logEvent(analytics, 'signup_failure', {
+                email: credential.email,
+                error: error.message
+            });
+            toast.error('Something went wronge')
         }
       
     }
@@ -77,12 +95,6 @@ const Signup = () => {
                         </div>
                         <div className="mb-4">
                             <input type="email" placeholder="Email" name='email' onChange={onChange} value={credential.email} className="w-full p-3   border border-zinc-300 dark:border-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400" />
-                        </div>
-                        <div className="mb-4">
-                            <input type="tel" placeholder="Phone" name='mobile' onChange={onChange} value={credential.mobile} className="w-full p-3   border border-zinc-300 dark:border-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400" />
-                        </div>
-                        <div className="mb-4">
-                            <input type="text" placeholder="What is your favorite sport" name="answer" onChange={onChange} value={credential.answer} className="w-full p-3 border border-zinc-300 dark:border-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400" />
                         </div>
                         <div className="mb-4 relative">
                             <input

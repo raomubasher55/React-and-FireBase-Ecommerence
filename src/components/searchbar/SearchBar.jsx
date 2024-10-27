@@ -1,18 +1,23 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { useMyContext } from '../../context/MyContext';
+import { logEvent } from 'firebase/analytics';
+import { analytics } from '../../firebase/firebaseCongif';
 
 const SearchBar = () => {
     const [query, setQuery] = useState('');
-    const [product, setProduct] = useState();
     const { getAllProducts } = useMyContext();
 
     const filterSearchData = getAllProducts.filter((obj) => obj.title.toLowerCase().includes(query)).slice(0, 8);
 
     const navigate = useNavigate();
     const handleOnChange = (e) => {
-        setQuery(e.target.value)
-    }
+        const searchQuery = e.target.value;
+        setQuery(searchQuery);
+        logEvent(analytics, 'search_query', {
+          query: searchQuery,
+        });
+      };
 
 
 

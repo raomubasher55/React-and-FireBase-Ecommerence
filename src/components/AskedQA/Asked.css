@@ -1,0 +1,148 @@
+.newsAsked__section {
+    width: 100%;
+    height: 150vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.askedQA__section {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.labels {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.labels .label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    height: 55px;
+    margin: 5px;
+    width: 80%;
+    border-bottom: 1px solid var(--grey);
+}
+
+.newsemail__section {
+    width: 100%;
+    /* height: 100%; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/*Text Styling*/
+.qa_fancytxt_xl {
+    font-size: 35px;
+    font-family: "Lato",sans-serif;
+    color:var(--darkgrey);
+    margin: 30px;
+}
+
+.qa_fancytxt_large {
+    font-family: "Lato",sans-serif;
+    color:var(--darkgrey);
+    margin: 10px;
+    font-size: 25px;
+}
+
+.qa_normal_txt {
+    font-family: "Poppins",sans-serif;
+    color: var(--darkgrey);
+    font-weight: 300;
+}
+
+.arrowDown {
+    margin:10px;
+    font-size: 20px;
+    color: var(--darkgrey);
+    cursor: pointer;
+}
+
+.email__holder {
+    border:none;
+    border:1px solid #d0d0d0;
+    border-radius: 6px;
+    width: 400px;
+    height: 20px;
+    font-family: "Poppins",sans-serif;
+    padding: 10px 20px;
+    outline: none;
+    margin: 20px;
+}
+
+.email__holder::placeholder {
+    font-family: 'Poppins',sans-serif;
+    font-weight: 400;
+}
+
+.submit__email button {
+    border: none;
+    font-family: "Poppins",sans-serif;
+    padding: 13px 14px;
+    border-radius: 6px;
+    background-color: #4141fc;
+    color:#fff;
+    cursor: pointer;
+}
+
+/*Responsive Styling*/
+
+@media screen and (max-width:830px) {
+    .qa_normal_txt {
+        font-size: 14px;
+    }
+}
+
+@media screen and (max-width:584px) {
+    .email__holder {
+        margin:1px;
+        width: 200px;
+    }
+
+    .newsAsked__section {
+        height: 180vh;
+    }
+}
+
+@media screen and (max-width:445px) {
+    .newsAsked__section {
+        width: 100%;
+    }
+
+    .email__holder {
+        width: 200px;
+    }
+
+    .qa_fancytxt_xl {
+        font-size: 26px;
+    }
+
+    .qa_fancytxt_large {
+        font-size: 18px;
+    }
+
+    .newsAsked__section {
+        height: 180vh;
+    }
+}
+
+@media screen and (max-width:326px) {
+    .email__holder {
+        width: 130px;
+        margin: 1px;
+    }
+
+    .newsAsked__section {
+        height: 180vh;
+    }
+ }

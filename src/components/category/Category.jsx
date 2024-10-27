@@ -53,7 +53,7 @@ const Category = () => {
               {category.map((item, index) => {
                 return (
                   <div key={index} onClick={() => navigate(`/category/${item.name}`)} className="flex flex-col cursor-pointer items-center border border-gray-300 rounded-full h-40 w-40 hover:shadow-lg ">
-                    <img src={item.image} alt="Laptops" className="m-2 object-cover" />
+                    <img src={item.image} alt="Laptops" className="m-2 object-cover w-full" />
                     <span className='font-bold'>{item.name}</span>
                   </div>
                 )

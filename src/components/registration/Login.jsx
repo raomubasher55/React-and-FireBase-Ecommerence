@@ -5,7 +5,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useMyContext } from '../../context/MyContext';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth, fireDB } from '../../firebase/firebaseCongif';
+import { analytics, auth, fireDB, logEvent } from '../../firebase/firebaseCongif';
 import { onSnapshot, query, where, collection } from 'firebase/firestore';
 import Loader from '../loader/Loader';
 
@@ -23,13 +23,20 @@ const Login = () => {
     const userLoginFunction = async (e) => {
         e.preventDefault();
         if (credential.email === "", credential.password === '') {
-            toast.error('All filed are required')
+            toast.error('All filed are required');
+            logEvent(analytics, 'login_attempt', {
+                success: false,
+                error: 'All fields are required'
+            });
         }
         setLoading(true);
 
         try {
             const users = await signInWithEmailAndPassword(auth, credential.email, credential.password);
-
+            logEvent(analytics, 'login_attempt', {
+                success: false,
+                email: credential.email
+            });
             try {
                 const q = query(
                     collection(fireDB, 'user'),
@@ -46,11 +53,18 @@ const Login = () => {
                     });
 
                     toast.success('Login Successfully');
+                    logEvent(analytics, 'login_success', {
+                        email: credential.email
+                    });
                     setLoading(false);
                     navigate('/')
                 })
             } catch (error) {
-
+                toast.error('Something went wrong');
+                logEvent(analytics, 'login_attempt', {
+                    success: false,
+                    error: 'Something went wrong'
+                });
             }
         } catch (error) {
             console.log(error);

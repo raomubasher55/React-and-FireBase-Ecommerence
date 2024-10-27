@@ -1,0 +1,44 @@
+.videos__section {
+    height: 80vh;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 10%;
+}
+
+p {
+text-align: center;
+}
+
+.videos__wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 80%;
+    width: 100%;
+}
+
+.video {
+    width: 300px;
+    margin: 3px;
+    border-radius: 6px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.video img {
+    border-radius: 6px;
+    width: 100%;
+    cursor: pointer;
+}
+
+/*Responsive Styles*/
+
+@media screen and (max-width:376px) {
+    .videos__wrapper .angle {
+        width: 10px;
+        height: 10px;
+    }
+}

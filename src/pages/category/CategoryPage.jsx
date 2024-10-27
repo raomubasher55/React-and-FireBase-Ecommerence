@@ -7,6 +7,8 @@ import Loader from '../../components/loader/Loader'
 import { useDispatch, useSelector } from 'react-redux'
 import { addToCart, deleteFromCart } from '../../redux/cartSlice'
 import { toast } from 'react-toastify'
+import { logEvent } from 'firebase/analytics'
+import { analytics } from '../../firebase/firebaseCongif'
 
 const CategoryPage = () => {
     const { getAllProducts, loading } = useMyContext();
@@ -23,12 +25,24 @@ const CategoryPage = () => {
     //add to cart function
     const addCart = (item) => {
         dispatch(addToCart(item));
+        logEvent(analytics, 'add_to_cart', {
+            item_name: item.title,
+            item_id: item.id,
+            price: item.price,
+            quantity: item.quantity,
+        });
         toast.success('Added to Cart')
     }
 
     //delete from cart function
     const deleteCart = (item)=>{
         dispatch(deleteFromCart(item));
+        logEvent(analytics, 'remove_from_cart', {
+            item_name: item.title,
+            item_id: item.id,
+            price: item.price,
+            quantity: item.quantity,
+        });
         toast.success('Delete cart')
     }
     useEffect(() => {

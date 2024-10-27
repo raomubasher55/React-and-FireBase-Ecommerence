@@ -1,3 +1,45 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.bg-image1{
+    background: url('../src/assets/2024_06_22_kids_wb.webp');
+    height: 100vh;
+    object-fit: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.bg-image2{
+    background: url('../src/assets/24_05_20_salt_wb.jpg');
+    height: 100vh;
+    object-fit: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.bg-image3{
+    background: url('../src/assets/2024_06_27_accessories_wb (1).webp');
+    height: 100vh;
+    object-fit: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.bg-image4{
+    background: url('../src/assets/2024_06_20_jewelry_wb.webp');
+    height: 100vh;
+    object-fit: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.bg-image5{
+    background: url('../src/assets/24_06_15_wb.webp');
+    height: 100vh;
+    object-fit: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}

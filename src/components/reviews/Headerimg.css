@@ -1,0 +1,126 @@
+.header__img {
+    height: 100vh;
+    background-image: url("https://i.pinimg.com/236x/f3/05/8e/f3058ef2729250b072a4d28b89a7039a.jpg");
+    background-size: contain;
+    display: flex;
+    align-items: center;
+    font-family: "Roboto",sans-serif;
+}
+
+.labels__header {
+    width: 400px;
+    height: 500px;
+    background-color: rgb(222, 184, 135,0.7);
+    border-radius: 15px;
+    margin: 20px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 28px 30px;
+}
+
+.labels__header .important {
+    width: 100%;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(214, 194, 168);
+}
+
+.labels__header p {
+    color:#fff;
+    margin: 5px;
+}
+
+.stars__img {
+    margin: 10px;
+    width: 155px;
+}
+
+.labels__header .fancy__style__txt {
+    font-size: 50px;
+    font-family: "Oswald", sans-serif;
+}
+
+.labels__header .bold__style__txt {
+    font-family: "Lato",sans-serif;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.labels__header .normal__style__txt {
+    font-family: "Lato",sans-serif;
+    font-size: 20px;
+}
+
+.browse_all_beds {
+    border: none;
+    width: 300px;
+    height: 40px;
+    font-family: "Poppins",sans-serif;
+    border-radius: 6px;
+    margin: 5px;
+    font-size: 18px;
+    background-color: #fff;
+    color:rgb(1, 1, 31);
+    cursor: pointer;
+    transition: 0.5s;
+}
+
+.browse_all_beds:hover {
+    background-color: var(--darkgrey);
+    color:#fff;
+}
+
+/*Responsive Styles*/
+
+@media screen and (max-width:769px) {
+    .header__img {
+        background-size: 100%;
+        align-items: flex-end;
+        position: relative;
+    }
+
+    .normal__style__txt {
+        display: none;
+    }
+
+    .labels__header .important {
+        display: none;
+    }
+    
+    .labels__header {
+        width: 100%;
+        height: 20%;
+        border-radius: 0;
+        background-color: burlywood;
+    }
+
+    .browse_all_beds {
+        position: absolute;
+        bottom:230px;
+    }
+
+    .fancy__style__txt {
+        font-size: 25px !important;
+    }
+}
+
+@media screen and (max-width:472px) {
+    .labels__header .bold__style__txt {
+        font-size: 14px;
+    }
+}
+
+@media screen and (max-width:350px) {
+    .labels__header .fancy__style__txt {
+        font-size: 18px !important;
+    }
+
+    .browse_all_beds {
+        width: 250px;
+    }
+}
+

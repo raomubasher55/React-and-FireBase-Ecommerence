@@ -2,30 +2,41 @@ import React, { useState } from 'react'
 import SearchBar from '../searchbar/SearchBar'
 import { Link, useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux';
+import { logEvent } from 'firebase/analytics';
+import { analytics } from '../../firebase/firebaseCongif';
 
 const Navbar = () => {
     const [isCategoriesDropdownVisible, setCategoriesDropdownVisible] = useState(false);
     const [isAccountDropdownVisible, setAccountDropdownVisible] = useState(false);
-    
+
     const user = JSON.parse(localStorage.getItem('users'));
 
     const navigate = useNavigate();
 
-    
-  const toggleCategoriesDropdown = () => {
-    setCategoriesDropdownVisible(!isCategoriesDropdownVisible);
-  };
 
-  const toggleAccountDropdown = () => {
-    setAccountDropdownVisible(!isAccountDropdownVisible);
-  };
-  
-  const handleOnLogout =async()=>{
-    localStorage.clear('users');
-    navigate('/')
-  }
+    const toggleCategoriesDropdown = () => {
+        setCategoriesDropdownVisible(!isCategoriesDropdownVisible);
+        logEvent(analytics, 'categories_dropdown_toggle', {
+            visible: !isCategoriesDropdownVisible,
+        });
+    };
 
-  const cartItems = useSelector((state)=> state.cart);
+    const toggleAccountDropdown = () => {
+        setAccountDropdownVisible(!isAccountDropdownVisible);
+        logEvent(analytics, 'account_dropdown_toggle', {
+            visible: !isAccountDropdownVisible,
+        });
+    };
+
+    const handleOnLogout = async () => {
+        localStorage.clear('users');
+        logEvent(analytics, 'logout', {
+            user_id: user?.id,
+        });
+        navigate('/');
+    };
+
+    const cartItems = useSelector((state) => state.cart);
 
     return (
         <>
@@ -66,11 +77,11 @@ const Navbar = () => {
                                                     </Link>
                                                 </li>
                                                 {/* {categories.map((category, index) => ( */}
-                                                    <li >
-                                                        {/* <Link to={`/category/${category.slug}`} className="text-gray-500   dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-500">
+                                                <li >
+                                                    {/* <Link to={`/category/${category.slug}`} className="text-gray-500   dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-500">
                                                             category name
                                                         </Link> */}
-                                                    </li>
+                                                </li>
                                                 {/* ))} */}
                                             </ul>
                                         </div>
@@ -96,7 +107,7 @@ const Navbar = () => {
                                     <div id="dropdownDelay" className="absolute z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
                                         <ul className="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDelayButton">
                                             <li>
-                                                <Link to={`${user.role === 'admin' ?'/admin-dashboard' :  '/user-dashboard'}`} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Dashboard</Link>
+                                                <Link to={`${user.role === 'admin' ? '/admin-dashboard' : '/user-dashboard'}`} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Dashboard</Link>
                                             </li>
                                             {user && <li>
                                                 <Link onClick={handleOnLogout} to="/login" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Logout</Link>
@@ -104,13 +115,13 @@ const Navbar = () => {
                                             <li>
                                                 <a href="#" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Earnings</a>
                                             </li>
-                                   
+
                                         </ul>
                                     </div>
                                 )}
                             </div>
                             <Link to={'/cart'} >Cart ({cartItems.length})</Link>
-                            { !user && <div>
+                            {!user && <div>
                                 <button className='bg-blue-500 py-1  px-3 text-white rounded-lg'>Login</button>
                             </div>}
                         </div>

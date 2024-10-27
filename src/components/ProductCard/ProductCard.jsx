@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart, deleteFromCart } from '../../redux/cartSlice';
 import { toast } from 'react-toastify';
+import { logEvent } from 'firebase/analytics';
+import { analytics } from '../../firebase/firebaseCongif';
 
 const ProductCard = () => {
     const { getAllProducts, loading } = useMyContext();
@@ -18,15 +20,25 @@ const ProductCard = () => {
     //add to cart function
     const addCart = (item) => {
         dispatch(addToCart(item));
+        logEvent(analytics, 'add_to_cart', {
+            product_id: item.id,
+            product_name: item.name,
+            price: item.price
+        });
         toast.success('Added to Cart')
     }
 
     //delete from cart function
     const deleteCart = (item) => {
         dispatch(deleteFromCart(item));
+        logEvent(analytics, 'delete_from_cart', {
+            product_id: item.id,
+            product_name: item.title,
+            price: item.price,
+        });
         toast.success('Delete cart')
     }
-    
+
     useEffect(() => {
         localStorage.setItem('cart', JSON.stringify(cartItems));
     }, [cartItems])
@@ -58,29 +70,33 @@ const ProductCard = () => {
                                     {item.price}
                                 </h1>
                                 <div className="flex justify-center ">
-                                {cartItems.some((p)=> p.id === item.id)
-                                                ?
-                                                <button
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        deleteCart(item);
-                                                    }}
-                                                    className="bg-red-700 hover:bg-pink-600 w-full text-white py-[4px] rounded-lg font-bold"
-                                                >
-                                                    Delete to Cart
-                                                </button>
-                                                : 
-                                                <button
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        addCart(item);
-                                                    }}
-                                                    className="bg-red-700 hover:bg-pink-600 w-full text-white py-[4px] rounded-lg font-bold"
-                                                >
-                                                    Add to Cart
-                                                </button>
-                                                }
-
+                                    {cartItems.some((p) => p.id === item.id)
+                                        ?
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                deleteCart(item);
+                                            }}
+                                            className="bg-red-700 hover:bg-pink-600 w-full text-white py-[4px] rounded-lg font-bold"
+                                        >
+                                            Delete to Cart
+                                        </button>
+                                        :
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                addCart(item);
+                                                logEvent(analytics, 'view_product', {
+                                                    product_id: item.id,
+                                                    product_name: item.title,
+                                                    price: item.price,
+                                                });
+                                            }}
+                                            className="bg-red-700 hover:bg-pink-600 w-full text-white py-[4px] rounded-lg font-bold"
+                                        >
+                                            Add to Cart
+                                        </button>
+                                    }
                                 </div>
                             </div>
                         </div>

@@ -1,6 +1,6 @@
 import { collection, deleteDoc, doc, onSnapshot, orderBy, query, QuerySnapshot } from 'firebase/firestore';
 import React, { useState, useContext, createContext, useEffect } from 'react';
-import { fireDB } from '../firebase/firebaseCongif';
+import { analytics, fireDB, logEvent } from '../firebase/firebaseCongif';
 import { toast } from 'react-toastify';
 
 const MyContext = createContext();
@@ -26,7 +26,8 @@ const MyContextProvider = ({ children }) => {
                     productArray.push({ ...doc.data(), id: doc.id });
                 });
                 setGetAllProducts(productArray);
-                setLoading(false)
+                setLoading(false);
+                logEvent(analytics, 'products_loaded');
             })
         } catch (error) {
             console.log(error);
@@ -36,7 +37,7 @@ const MyContextProvider = ({ children }) => {
 
 
     //order function
-  const  getAllOrderFunction = async () => {
+    const getAllOrderFunction = async () => {
         setLoading(true);
         try {
             const q = query(
@@ -49,26 +50,28 @@ const MyContextProvider = ({ children }) => {
                     orderArray.push({ ...doc.data(), id: doc.id });
                 });
                 setGetAllOrder(orderArray);
-                setLoading(false)
+                setLoading(false);
+                logEvent(analytics, 'orders_loaded'); 
             })
         } catch (error) {
             console.log(error);
             setLoading(false);
         }
-}
+    }
 
 
-   /**========================================================================
-    * delete order
-     *========================================================================**/
+    /**========================================================================
+     * delete order
+      *========================================================================**/
 
-    const orderDelete = async(id)=>{
+    const orderDelete = async (id) => {
         setLoading(true);
         try {
             await deleteDoc(doc(fireDB, 'order', id))
             toast.success('Order Deleted successfully')
             getAllOrderFunction();
-            setLoading(false)
+            setLoading(false);
+            logEvent(analytics, 'order_deleted', { order_id: id });
         } catch (error) {
             console.log(error)
             setLoading(false)
@@ -78,7 +81,7 @@ const MyContextProvider = ({ children }) => {
     /**========================================================================
     * get All user
      *========================================================================**/
-    
+
     const getAllUserFunction = async () => {
         setLoading(true);
         try {
@@ -93,6 +96,7 @@ const MyContextProvider = ({ children }) => {
                 });
                 setGetAllUser(userArray);
                 setLoading(false);
+                logEvent(analytics, 'users_loaded'); 
             });
             return () => data;
         } catch (error) {
@@ -101,26 +105,26 @@ const MyContextProvider = ({ children }) => {
         }
     }
 
-useEffect(() => {
-    getAllProductFunction();
-    getAllOrderFunction();
-    getAllUserFunction();
-}, [])
+    useEffect(() => {
+        getAllProductFunction();
+        getAllOrderFunction();
+        getAllUserFunction();
+    }, [])
 
-return (
-    <MyContext.Provider value={{
-        loading,
-        setLoading,
-        user,
-        getAllProducts,
-        getAllProductFunction,
-        getAllOrder,
-        orderDelete,
-        getAllUser,
-    }} >
-        {children}
-    </MyContext.Provider>
-)
+    return (
+        <MyContext.Provider value={{
+            loading,
+            setLoading,
+            user,
+            getAllProducts,
+            getAllProductFunction,
+            getAllOrder,
+            orderDelete,
+            getAllUser,
+        }} >
+            {children}
+        </MyContext.Provider>
+    )
 };
 
 

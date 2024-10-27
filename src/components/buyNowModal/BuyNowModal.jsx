@@ -83,7 +83,7 @@ const BuyNowModal = ({ addressInfo, setAddressInfo, buyNowFunction }) => {
                         />
                     </div>
 
-                    <div className="">
+                    <div>
                         <Button
                             type="button"
                             onClick={()=>{

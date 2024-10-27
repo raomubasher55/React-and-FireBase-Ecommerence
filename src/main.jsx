@@ -20,6 +20,7 @@ import UserDashboard from './components/user/UserDashboard.jsx';
 import AdminDashboard from './pages/admin/AdminDashboard.jsx';
 import AddProductPage from './pages/admin/AddProductPage.jsx';
 import UpdateProductPage from './pages/admin/UpdateProductPage.jsx';
+import Try from './pages/admin/Try.jsx';
 import ProtectedRouteForUser from './components/protectedRoutes/ProtectedRouteForUser.jsx';
 import ProtectedRouteForAdmin from './components/protectedRoutes/ProtectedRouteForAdmin.jsx';
 import CategoryPage from './pages/category/CategoryPage.jsx';
@@ -27,7 +28,7 @@ import { Provider } from 'react-redux';
 import { store } from './redux/store.jsx';
 
 
-
+  
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />}>
@@ -37,6 +38,8 @@ const router = createBrowserRouter(
       <Route path='all-products' element={<AllProducts />} />
       <Route path='login' element={<Login />} />
       <Route path='signup' element={<Signup />} />
+      <Route path="*" element={<NoPage />} />
+      <Route path="try" element={<Try />} />
       <Route path='category/:categoryname' element={<CategoryPage />} />
       <Route path='user-dashboard' element={
         <ProtectedRouteForUser>
@@ -60,7 +63,7 @@ const router = createBrowserRouter(
       } />
     </Route>
   )
-);
+)
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
